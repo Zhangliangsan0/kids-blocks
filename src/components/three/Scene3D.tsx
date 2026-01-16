@@ -76,9 +76,12 @@ const Block = memo(function Block({
     }
     pointerDownPos.current = null
     
-    // 计算堆叠位置（当前积木顶部）
-    const stackHeight = data.position[1] + getBlockHeight(data.type) / 2 + getBlockHeight(selectedType) / 2
-    onStackClick([data.position[0], stackHeight, data.position[2]])
+    // 只有点击顶面才堆叠（法向量 y > 0.5 表示是顶面）
+    if (e.face && e.face.normal.y > 0.5) {
+      const stackHeight = data.position[1] + getBlockHeight(data.type) / 2 + getBlockHeight(selectedType) / 2
+      onStackClick([data.position[0], stackHeight, data.position[2]])
+    }
+    // 点击侧面不做任何操作
   }
 
   return (
