@@ -5,10 +5,14 @@ import ColorPanel from '../components/ui/ColorPanel'
 import Scene3D from '../components/three/Scene3D'
 import StatsPanel from '../components/ui/StatsPanel'
 import AuthModal from '../components/ui/AuthModal'
+import AIAssistant from '../components/ui/AIAssistant'
 import { useAuth } from '../contexts/AuthContext'
 import { saveWork, updateWork } from '../lib/works'
+import { generateBlocks } from '../lib/ai'
 import type { BlockType, BlockData, Work } from '../types'
 import './BuilderPage.css'
+
+const AI_API_KEY = import.meta.env.VITE_AI_API_KEY || ''
 
 export default function BuilderPage() {
   const { user } = useAuth()
@@ -34,6 +38,7 @@ export default function BuilderPage() {
   const [showSaveModal, setShowSaveModal] = useState(false)
   const [saveTitle, setSaveTitle] = useState('')
   const [saving, setSaving] = useState(false)
+  const [aiLoading, setAiLoading] = useState(false)
 
   const generateId = () => Math.random().toString(36).substring(2, 11)
 
@@ -191,6 +196,38 @@ export default function BuilderPage() {
     setCurrentWork(work)
   }, [blocks.length])
 
+  // AI 生成积木
+  const handleAIGenerate = useCallback(async (prompt: string) => {
+    if (!AI_API_KEY) {
+      alert('AI 功能未配置，请设置 VITE_AI_API_KEY')
+      return
+    }
+    
+    setAiLoading(true)
+    try {
+      const aiBlocks = await generateBlocks(prompt, AI_API_KEY)
+      const newBlocks: BlockData[] = aiBlocks.map(b => ({
+        id: generateId(),
+        type: b.type,
+        color: b.color,
+        position: b.position
+      }))
+      
+      setBlocks(newBlocks)
+      setHistory(h => {
+        const newHistory = h.slice(0, historyIndex + 1)
+        newHistory.push(newBlocks)
+        return newHistory
+      })
+      setHistoryIndex(i => i + 1)
+    } catch (error) {
+      alert('AI 生成失败，请重试')
+      console.error(error)
+    } finally {
+      setAiLoading(false)
+    }
+  }, [historyIndex])
+
   return (
     <div className="builder-page">
       <Navbar
@@ -227,6 +264,10 @@ export default function BuilderPage() {
           <ColorPanel
             selectedColor={selectedColor}
             onSelectColor={setSelectedColor}
+          />
+          <AIAssistant
+            onGenerate={handleAIGenerate}
+            loading={aiLoading}
           />
           <StatsPanel 
             blockCount={blocks.length} 
