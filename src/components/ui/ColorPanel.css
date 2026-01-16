@@ -1,0 +1,91 @@
+.color-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.color-item {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  border: 3px solid #E0E7FF;
+  padding: 4px;
+  background: linear-gradient(145deg, #FFFFFF 0%, #F8FAFF 100%);
+  box-shadow: 
+    4px 4px 8px rgba(79, 70, 229, 0.1),
+    -2px -2px 6px rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: var(--transition-bounce);
+  overflow: hidden;
+}
+
+.color-fill {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  box-shadow: 
+    inset 2px 2px 4px rgba(255, 255, 255, 0.5),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+  transition: var(--transition-smooth);
+}
+
+.color-item:hover {
+  transform: scale(1.1) rotate(-3deg);
+  border-color: var(--color-primary-light);
+  box-shadow: 
+    6px 6px 12px rgba(79, 70, 229, 0.15),
+    -3px -3px 8px rgba(255, 255, 255, 0.8);
+}
+
+.color-item:hover .color-fill {
+  box-shadow: 
+    inset 3px 3px 6px rgba(255, 255, 255, 0.6),
+    inset -3px -3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.color-item.active {
+  border-color: var(--color-primary);
+  transform: scale(1.05);
+  box-shadow: 
+    6px 6px 16px rgba(79, 70, 229, 0.25),
+    -3px -3px 8px rgba(255, 255, 255, 0.8),
+    0 0 0 3px var(--color-primary-light);
+}
+
+.check-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: var(--radius-full);
+  color: var(--color-primary);
+  box-shadow: 
+    2px 2px 6px rgba(0, 0, 0, 0.2),
+    0 0 0 2px var(--color-primary);
+  animation: pop-in 0.2s ease-out;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

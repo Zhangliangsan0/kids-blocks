@@ -1,0 +1,33 @@
+.scene-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(180deg, #E0E7FF 0%, #C7D2FE 100%);
+}
+
+.scene-tips {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(145deg, #FFFFFF 0%, #F8FAFF 100%);
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border: 3px solid #E0E7FF;
+  box-shadow: 
+    6px 6px 12px rgba(79, 70, 229, 0.15),
+    -3px -3px 8px rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scene-tips span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
