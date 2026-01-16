@@ -19,6 +19,7 @@ export default function BuilderPage() {
   
   const [selectedBlock, setSelectedBlock] = useState<BlockType>('cube')
   const [selectedColor, setSelectedColor] = useState('#EF4444')
+  const [selectedRotation, setSelectedRotation] = useState(0) // 0, 90, 180, 270
   const [blocks, setBlocks] = useState<BlockData[]>([])
   const [history, setHistory] = useState<BlockData[][]>([[]])
   const [historyIndex, setHistoryIndex] = useState(0)
@@ -48,6 +49,7 @@ export default function BuilderPage() {
         id: generateId(),
         type: selectedBlock,
         position,
+        rotation: selectedRotation,
         color: selectedColor,
       }
       const newBlocks = [...prev, newBlock]
@@ -61,7 +63,7 @@ export default function BuilderPage() {
       
       return newBlocks
     })
-  }, [selectedBlock, selectedColor, historyIndex])
+  }, [selectedBlock, selectedColor, selectedRotation, historyIndex])
 
   const handleRemoveBlock = useCallback((id: string) => {
     setBlocks(prev => {
@@ -210,7 +212,8 @@ export default function BuilderPage() {
         id: generateId(),
         type: b.type,
         color: b.color,
-        position: b.position
+        position: b.position,
+        rotation: 0
       }))
       
       setBlocks(newBlocks)
@@ -247,6 +250,8 @@ export default function BuilderPage() {
           <Toolbar
             selectedBlock={selectedBlock}
             onSelectBlock={setSelectedBlock}
+            selectedRotation={selectedRotation}
+            onRotate={() => setSelectedRotation(r => (r + 90) % 360)}
           />
         </div>
 

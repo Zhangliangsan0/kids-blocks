@@ -4,6 +4,7 @@ export interface BlockData {
   id: string
   type: BlockType
   position: [number, number, number]
+  rotation: number // Y轴旋转角度 (0, 90, 180, 270)
   color: string
 }
 

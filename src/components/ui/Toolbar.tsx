@@ -5,7 +5,8 @@ import {
   Circle, 
   Triangle, 
   Sparkles,
-  Square
+  Square,
+  RotateCw
 } from 'lucide-react'
 import type { BlockType } from '../../types'
 import './Toolbar.css'
@@ -29,9 +30,11 @@ const blockOptions: BlockOption[] = [
 interface ToolbarProps {
   selectedBlock: BlockType
   onSelectBlock: (type: BlockType) => void
+  selectedRotation: number
+  onRotate: () => void
 }
 
-export default memo(function Toolbar({ selectedBlock, onSelectBlock }: ToolbarProps) {
+export default memo(function Toolbar({ selectedBlock, onSelectBlock, selectedRotation, onRotate }: ToolbarProps) {
   return (
     <div className="toolbar clay-panel">
       <div className="panel-header">
@@ -53,6 +56,13 @@ export default memo(function Toolbar({ selectedBlock, onSelectBlock }: ToolbarPr
             <span className="block-name">{block.name}</span>
           </button>
         ))}
+      </div>
+      
+      <div className="rotation-control">
+        <button className="rotate-btn" onClick={onRotate}>
+          <RotateCw size={20} strokeWidth={2.5} />
+          <span>旋转 {selectedRotation}°</span>
+        </button>
       </div>
     </div>
   )

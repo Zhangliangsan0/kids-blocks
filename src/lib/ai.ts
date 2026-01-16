@@ -53,7 +53,7 @@ export async function generateBlocks(prompt: string, apiKey: string): Promise<AI
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: 'Qwen/Qwen2.5-72B-Instruct',
+      model: 'Qwen/Qwen3-VL-32B-Instruct',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: `请帮我搭建：${prompt}` }

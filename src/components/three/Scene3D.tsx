@@ -1,8 +1,9 @@
-import { memo, useMemo, useRef, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { memo, useMemo, useRef, useState, useEffect } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import type { ThreeEvent } from '@react-three/fiber'
 import { OrbitControls, Grid } from '@react-three/drei'
-import { MousePointer, Trash2 } from 'lucide-react'
+import { MousePointer, Trash2, Camera } from 'lucide-react'
+import * as THREE from 'three'
 import type { BlockData, BlockType } from '../../types'
 import './Scene3D.css'
 
@@ -12,6 +13,7 @@ interface Scene3DProps {
   selectedBlockType: BlockType
   onAddBlock: (position: [number, number, number]) => void
   onRemoveBlock: (id: string) => void
+  onScreenshot?: (dataUrl: string) => void
 }
 
 // 获取积木高度
@@ -34,8 +36,26 @@ const Block = memo(function Block({
   onStackClick: (position: [number, number, number]) => void
   selectedType: BlockType
 }) {
+  const meshRef = useRef<THREE.Mesh>(null)
   const [hovered, setHovered] = useState(false)
   const pointerDownPos = useRef<{ x: number; y: number } | null>(null)
+  const [scale, setScale] = useState(0.1) // 初始小尺寸，播放动画
+  const isFirstRender = useRef(true)
+
+  // 放置动画 - 只在首次渲染时播放
+  useFrame(() => {
+    if (isFirstRender.current && scale < 1) {
+      setScale(s => Math.min(s + 0.15, 1))
+      if (scale >= 1) {
+        isFirstRender.current = false
+      }
+    }
+  })
+
+  // 弹跳效果
+  const animatedScale = scale < 1 
+    ? scale + Math.sin(scale * Math.PI) * 0.2 
+    : 1
 
   const geometry = useMemo(() => {
     switch (data.type) {
@@ -84,9 +104,15 @@ const Block = memo(function Block({
     // 点击侧面不做任何操作
   }
 
+  // 计算旋转弧度
+  const rotationY = (data.rotation || 0) * Math.PI / 180
+
   return (
     <mesh 
+      ref={meshRef}
       position={data.position}
+      rotation={[0, rotationY, 0]}
+      scale={animatedScale}
       onPointerDown={handlePointerDown}
       onClick={handleClick}
       onDoubleClick={(e) => {
@@ -209,12 +235,40 @@ function SceneContent({
   )
 }
 
+// 全局截图函数引用
+let screenshotFn: (() => void) | null = null
+
+function ScreenshotHandler({ onScreenshot }: { onScreenshot?: (dataUrl: string) => void }) {
+  const { gl, scene, camera } = useThree()
+  
+  useEffect(() => {
+    screenshotFn = () => {
+      gl.render(scene, camera)
+      const dataUrl = gl.domElement.toDataURL('image/png')
+      if (onScreenshot) {
+        onScreenshot(dataUrl)
+      } else {
+        const link = document.createElement('a')
+        link.download = `积木作品_${Date.now()}.png`
+        link.href = dataUrl
+        link.click()
+      }
+    }
+    return () => {
+      screenshotFn = null
+    }
+  }, [gl, scene, camera, onScreenshot])
+  
+  return null
+}
+
 export default function Scene3D({ 
   blocks, 
   selectedBlockType,
   selectedColor,
   onAddBlock, 
-  onRemoveBlock
+  onRemoveBlock,
+  onScreenshot
 }: Scene3DProps) {
   // selectedColor 保留用于未来扩展
   void selectedColor
@@ -233,7 +287,16 @@ export default function Scene3D({
           onAddBlock={onAddBlock}
           onRemoveBlock={onRemoveBlock}
         />
+        <ScreenshotHandler onScreenshot={onScreenshot} />
       </Canvas>
+
+      <button 
+        className="screenshot-btn"
+        onClick={() => screenshotFn?.()}
+        title="截图"
+      >
+        <Camera size={20} />
+      </button>
 
       <div className="scene-tips">
         <span><MousePointer size={14} /> 点击放置/堆叠</span>

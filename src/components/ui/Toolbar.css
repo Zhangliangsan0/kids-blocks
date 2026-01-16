@@ -88,3 +88,38 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+/* Rotation Control */
+.rotation-control {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 2px solid #E0E7FF;
+}
+
+.rotate-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: linear-gradient(145deg, #F8FAFF 0%, #EEF2FF 100%);
+  border: 3px solid #E0E7FF;
+  border-radius: var(--radius-md);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition-bounce);
+}
+
+.rotate-btn:hover {
+  background: linear-gradient(145deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  color: white;
+  border-color: var(--color-primary);
+  transform: scale(1.02);
+}
+
+.rotate-btn:active {
+  transform: scale(0.98);
+}
